@@ -10,13 +10,13 @@ from app.core.response import success
 
 router = APIRouter(prefix="/waitings", tags=["Waitings"])
 
-@router.post("", response_model=WaitingResponse)
+@router.post("/create", response_model=WaitingResponse)
 def create_waiting(dto: WaitingCreate, db: Session = Depends(get_db)):
     service = WaitingService(db)
     waiting = service.create_waiting()
     return success(waiting)
 
-@router.get("", response_model=ApiResponse[PageResponse[WaitingResponse]])
+@router.get("/list", response_model=ApiResponse[PageResponse[WaitingResponse]])
 def get_waitings(
     status: WaitingStatus = Query(..., description="WAITING | IN_PROGRESS | DONE | CANCEL | NO_SHOW"),
     page: int = Query(1, ge=1),

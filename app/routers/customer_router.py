@@ -21,10 +21,13 @@ def create_customer(dto: CustomerCreate, db: Session = Depends(get_db)):
     return success(customer)
 
 
-@router.get("/{customer_id}", response_model=ApiResponse[CustomerResponse])
-def get_customer(customer_id: int, db: Session = Depends(get_db)):
+@router.get("/by-phone", response_model=ApiResponse[CustomerResponse])
+def get_customer_by_phone(
+    phone: str = Query(..., description="전화번호"),
+    db: Session = Depends(get_db),
+):
     service = CustomerService(db)
-    return success(service.get(customer_id))
+    return success(service.get_by_phone(phone))
 
 
 @router.get("", response_model=ApiResponse[PageResponse[CustomerResponse]])
