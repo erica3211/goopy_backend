@@ -13,7 +13,7 @@ router = APIRouter(prefix="/waitings", tags=["Waitings"])
 @router.post("/create", response_model=WaitingResponse)
 def create_waiting(dto: WaitingCreate, db: Session = Depends(get_db)):
     service = WaitingService(db)
-    waiting = service.create_waiting()
+    waiting = service.create(dto.dict())
     return success(waiting)
 
 @router.get("/list", response_model=ApiResponse[PageResponse[WaitingResponse]])

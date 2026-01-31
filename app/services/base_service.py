@@ -30,3 +30,4 @@ class BaseService(Generic[ModelType]):
             "total": total,
             "total_pages": total_pages,
         }
+    
