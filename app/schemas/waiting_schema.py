@@ -10,6 +10,7 @@ class WaitingCreate(BaseModel):
 class WaitingUpdate(BaseModel):
     customer_id: int
     estimated_minutes: int = 15
+    status:WaitingStatus
     
 class WaitingResponse(BaseModel):
     id: int

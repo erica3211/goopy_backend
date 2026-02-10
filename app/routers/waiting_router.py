@@ -8,9 +8,9 @@ from app.schemas.common import ApiResponse, PageResponse
 from app.core.enums import WaitingStatus
 from app.core.response import success
 
-router = APIRouter(prefix="/waitings", tags=["Waitings"])
+router = APIRouter(tags=["Waitings"])
 
-@router.post("/create",response_model=ApiResponse[WaitingResponse])
+@router.post("/create_waiting",response_model=ApiResponse[WaitingResponse])
 def create_waiting(
     customer_id: int,
     estimated_minutes: int,
@@ -23,7 +23,7 @@ def create_waiting(
     )
     return success()
 
-@router.get("/list", response_model=ApiResponse[PageResponse[WaitingResponse]])
+@router.get("/get_waiting_list", response_model=ApiResponse[PageResponse[WaitingResponse]])
 def get_waitings(
     status: WaitingStatus = Query(..., description="WAITING | IN_PROGRESS | DONE | CANCEL | NO_SHOW"),
     page: int = Query(1, ge=1),
@@ -33,23 +33,24 @@ def get_waitings(
     service = WaitingService(db)
     return success(service.paginate_by_status(status, page, size))
 
-@router.get("/{customer_id}", response_model=ApiResponse[WaitingResponse])
+@router.get("/get_waiting/{customer_id}", response_model=ApiResponse[WaitingResponse])
 def get_customer(customer_id: int, db: Session = Depends(get_db)):
     service = WaitingService(db)
     return success(service.get(customer_id))
 
 
-@router.put("/{customer_id}", response_model=ApiResponse[WaitingResponse])
+@router.put("/update_waiting/{waiting_id}", response_model=ApiResponse[WaitingUpdate])
 def update_customer(
-    customer_id: int,
-    dto: WaitingUpdate,
+    waiting_id: int,
+    status : WaitingStatus,
+    estimated_minutes : int | None = None,
     db: Session = Depends(get_db)
 ):
     service = WaitingService(db)
-    return success(service.update(customer_id, dto.dict(exclude_unset=True)))
+    return success(service.update_waiting(waiting_id=waiting_id, estimated_minutes=estimated_minutes, status=status))
 
 
-@router.delete("/{customer_id}", response_model=ApiResponse[None])
+@router.delete("/delete_waiting/{customer_id}", response_model=ApiResponse[None])
 def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     service = WaitingService(db)
     service.delete(customer_id)

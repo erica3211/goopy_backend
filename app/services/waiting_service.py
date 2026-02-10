@@ -74,3 +74,29 @@ class WaitingService(BaseService):
 
         self.db.add(waiting)
         self.db.commit()
+        
+    def update_waiting(
+        self,
+        waiting_id: int,
+        status: WaitingStatus,
+        estimated_minutes: int | None = None,
+
+    ):
+        waiting = (
+            self.db.query(Waiting)
+            .filter(Waiting.id == waiting_id)
+            .first()
+        )
+
+        if not waiting:
+            raise ValueError("Waiting not found")
+
+        if estimated_minutes is not None:
+            waiting.estimated_minutes = estimated_minutes
+
+        waiting.status = status
+
+        self.db.commit()
+        self.db.refresh(waiting)
+
+        return waiting

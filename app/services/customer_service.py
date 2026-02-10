@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from app.services.base_service import BaseService
 from app.models.customer_model import Customer
 
